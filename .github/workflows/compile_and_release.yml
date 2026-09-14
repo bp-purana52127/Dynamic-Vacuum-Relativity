@@ -1,0 +1,27 @@
+name: Auto-Compile LaTeX for Zenodo
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build_pdf:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Compile LaTeX Source
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: manuscript.tex
+          args: -pdf -file-line-error -interaction=nonstopmode
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: manuscript.pdf
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
